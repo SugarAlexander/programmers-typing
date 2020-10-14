@@ -7,6 +7,7 @@ function init() {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
     tick();
+
 }
 window.addEventListener("DOMContentLoaded", init);
 
@@ -29,4 +30,5 @@ function update() {
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillRect(600, x, 100, 10);
+
 }
