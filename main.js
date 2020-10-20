@@ -15,15 +15,52 @@ canvas.width = 1920;
 canvas.height = 1080;
 
 notes.push({
-  lane: 1, // 左端のレーン
+  lane: 0, // 左端のレーン
   progress: 0 // 進み具合
 });
+
+
 
 function notu() {
     document.body.appendChild(canvas);
     draw();
+    window.setTimeout("hoge()", 1000);
+    window.setTimeout("hoge1()", 2000);
+    window.setTimeout("hoge2()", 3000);
+    window.setTimeout("hoge3()", 4000);
+    window.setTimeout("hoge4()", 5000);
 }
 
+function hoge(){
+  notes.push({
+    lane: 1, // 左端のレーン
+    progress: 0 // 進み具合
+  });
+}
+
+function hoge1(){
+  notes.push({
+    lane: 2, // 左端のレーン
+    progress: 0 // 進み具合
+  });
+}
+function hoge2(){
+  notes.push({
+    lane: 3, // 左端のレーン
+    progress: 0 // 進み具合
+  });
+}
+function hoge3(){
+  notes.push({
+    lane: 4, // 左端のレーン
+    progress: 0 // 進み具合
+  });
+}function hoge4(){
+  notes.push({
+    lane: 0, // 左端のレーン
+    progress: 0 // 進み具合
+  });
+}
 
 
 function draw() {
