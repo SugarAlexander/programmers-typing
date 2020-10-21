@@ -1,20 +1,34 @@
 let x = 0;
 
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext('2d');
+let canvas;
+let ctx;
 
-canvas.width = 1920;
-canvas.height = 1080;
+function init() {
+    canvas = document.querySelector("canvas");
+    ctx = canvas.getContext("2d");
+    tick();
 
-function notu() {
-    document.body.appendChild(canvas);
-    draw();
+}
+window.addEventListener("DOMContentLoaded", init);
+
+function tick() {
+    update();
+    render();
+    window.requestAnimationFrame(tick);
 }
 
+/**
+ * 更新
+ */
+function update() {
+    x++;
+}
 
-
-function draw() {
+/**
+ * 描画
+ */
+function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillRect(600, x++, 100, 10);
-    window.requestAnimationFrame(draw);
+    ctx.fillRect(600, x, 100, 10);
+
 }
