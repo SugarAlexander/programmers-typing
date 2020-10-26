@@ -1,7 +1,15 @@
 //let x = 0;
 
 let notes = []; // ノーツを管理する配列
+const TEST_NOTES = [
+  { lane: 0, time: 1000 },
+  { lane: 1, time: 2000 },
+  { lane: 2, time: 3000 },
+  { lane: 3, time: 4000 },
+  { lane: 4, time: 5000 },
+];
 
+//let progress;
 let canvas;
 let ctx;
 
@@ -11,61 +19,47 @@ const NOTE_WIDTH = 150; // ノーツの横幅
 const NOTE_HEIGHT = 50; // ノーツの高さ
 const NOTE_SCREEN_HEIGHT = 800; // ノーツを表示する領域の高さ
 
+
 function init() {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
+    
+    testNotes();
+
     tick();
-    window.setTimeout("hoge()", 1000);
-    window.setTimeout("hoge1()", 2000);
-    window.setTimeout("hoge2()", 3000);
-    window.setTimeout("hoge3()", 4000);
-    window.setTimeout("hoge4()", 5000);
-
 }
 
-function hoge(){
-  notes.push({
-    lane: 1, // 左端のレーン
-    progress: 0 // 進み具合
+function testNotes(){
+ 
+  TEST_NOTES.forEach(note => {
+    setTimeout(() => {
+      notes.push({
+        lane: note.lane,
+        progress: 0
+      });
+    },note.time);
   });
+  
 }
 
-function hoge1(){
-  notes.push({
-    lane: 2, // 左端のレーン
-    progress: 0 // 進み具合
-  });
-}
-function hoge2(){
-  notes.push({
-    lane: 3, // 左端のレーン
-    progress: 0 // 進み具合
-  });
-}
-function hoge3(){
-  notes.push({
-    lane: 4, // 左端のレーン
-    progress: 0 // 進み具合
-  });
-}function hoge4(){
-  notes.push({
-    lane: 0, // 左端のレーン
-    progress: 0 // 進み具合
-  });
-}
-window.addEventListener("DOMContentLoaded", init);
+addEventListener("DOMContentLoaded", init);
 
 function tick() {
     update();
     render();
-    window.requestAnimationFrame(tick);
+    
+    requestAnimationFrame(tick);
 }
 
 /**
  * 更新
  */
 function update() {
-   
+  
+  notes.forEach(note => {
+    note.progress += 0.005;
+  });
+  notes = notes.filter(note => note.progress < 1.0);
 }
 
 /**
@@ -79,12 +73,6 @@ function render() {
         LEFT_OFFSET + note.lane * NOTE_WIDTH, // X座標
         TOP_OFFSET + note.progress * NOTE_SCREEN_HEIGHT, // Y座標
         NOTE_WIDTH, NOTE_HEIGHT);
-        note.progress += 0.005;
-
-        notes = notes.filter(note => note.progress < 1.0);
     });
-
-  
-  
 }
 
