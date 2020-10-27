@@ -2,11 +2,11 @@
 
 let notes = []; // ノーツを管理する配列
 const TEST_NOTES = [
-  { lane: 0, time: 1000 },
-  { lane: 1, time: 2000 },
-  { lane: 2, time: 3000 },
-  { lane: 3, time: 4000 },
-  { lane: 4, time: 5000 },
+  { lane: 0, time: 0 },
+  { lane: 1, time: 1000 },
+  { lane: 2, time: 2000 },
+  { lane: 3, time: 3000 },
+  { lane: 4, time: 4000 },
 ];
 
 //let progress;
@@ -23,6 +23,8 @@ const NOTE_SCREEN_HEIGHT = 800; // ノーツを表示する領域の高さ
 function init() {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
+  
+    
     
     testNotes();
 
@@ -44,8 +46,12 @@ function testNotes(){
 
 addEventListener("DOMContentLoaded", init);
 
-function tick() {
-    update();
+let lastTime = null;
+function tick(time) {
+    const delta = lastTime == null ? 0 : time - lastTime;
+    lastTime = time;
+
+    update(delta);
     render();
     
     requestAnimationFrame(tick);
@@ -54,10 +60,10 @@ function tick() {
 /**
  * 更新
  */
-function update() {
+function update(delta) {
   
   notes.forEach(note => {
-    note.progress += 0.005;
+    note.progress += (200 / 0.5) * (delta / 1000) / NOTE_SCREEN_HEIGHT;
   });
   notes = notes.filter(note => note.progress < 1.0);
 }
@@ -67,6 +73,7 @@ function update() {
  */
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 800 ,1980, 20);
     notes.forEach(note => {
       // 例えば fillRect で描く場合
       ctx.fillRect(
