@@ -37,6 +37,7 @@ function testNotes(){
     },note.time);
   });
 }
+window.addEventListener("DOMContentLoaded", init);
 
 addEventListener("DOMContentLoaded", init);
 
