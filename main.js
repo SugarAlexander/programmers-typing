@@ -24,7 +24,7 @@ function init() {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
   
-    
+    getCSV();
     
     testNotes();
 
@@ -41,7 +41,7 @@ function testNotes(){
       });
     },note.time);
   });
-  
+  console.log(TEST_NOTES[2]);
 }
 
 addEventListener("DOMContentLoaded", init);
@@ -56,6 +56,31 @@ function tick(time) {
     
     requestAnimationFrame(tick);
 }
+
+//CSVファイルを読み込む関数getCSV()の定義
+function getCSV(){
+  var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
+  req.open("get", "notedata.csv", true); // アクセスするファイルを指定
+  req.send(); // HTTPリクエストの発行
+ // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
+ req.onload = function(){
+	convertCSVtoArray(req.responseText); // 渡されるのは読み込んだCSVデータ
+    }
+}
+
+function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列として渡される
+  var result = []; // 最終的な二次元配列を入れるための配列
+  var tmp = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
+
+  // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
+  for(var i=0;i<tmp.length;++i){
+      result[i] = tmp[i].split(',');
+      console.log(result[i]); 
+  }
+
+  console.log(result[1]); 
+}
+
 
 /**
  * 更新
