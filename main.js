@@ -1,5 +1,3 @@
-//let x = 0;
-
 let notes = []; // ノーツを管理する配列
 const TEST_NOTES = [
   { lane: 0, time: 0 },
@@ -23,16 +21,14 @@ const NOTE_SCREEN_HEIGHT = 800; // ノーツを表示する領域の高さ
 function init() {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
-  
     getCSV();
-    
+
     testNotes();
 
     tick();
 }
 
-function testNotes(){
- 
+function testNotes(){ 
   TEST_NOTES.forEach(note => {
     setTimeout(() => {
       notes.push({
@@ -41,14 +37,17 @@ function testNotes(){
       });
     },note.time);
   });
+
   console.log(TEST_NOTES[2]);
+
 }
+window.addEventListener("DOMContentLoaded", init);
 
 addEventListener("DOMContentLoaded", init);
 
 let lastTime = null;
 function tick(time) {
-    const delta = lastTime == null ? 0 : time - lastTime;
+    const delta = lastTime == null ? 0 : (time - lastTime) / 1000;
     lastTime = time;
 
     update(delta);
@@ -88,7 +87,7 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
 function update(delta) {
   
   notes.forEach(note => {
-    note.progress += (200 / 0.5) * (delta / 1000) / NOTE_SCREEN_HEIGHT;
+    note.progress += (200 / 0.5) * delta / NOTE_SCREEN_HEIGHT;
   });
   notes = notes.filter(note => note.progress < 1.0);
 }
