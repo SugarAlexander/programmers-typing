@@ -1,13 +1,5 @@
 let notes = []; // ノーツを管理する配列
-const TEST_NOTES = [
-  { lane: 0, time: 0 },
-  { lane: 1, time: 1000 },
-  { lane: 2, time: 2000 },
-  { lane: 3, time: 3000 },
-  { lane: 4, time: 4000 },
-];
 
-//let progress;
 let canvas;
 let ctx;
 
@@ -18,38 +10,34 @@ const NOTE_HEIGHT = 50; // ノーツの高さ
 const NOTE_SCREEN_HEIGHT = 800; // ノーツを表示する領域の高さ
 
 
+
+let notearray ;
+
+let nextNoteLine = 0;
+
+
 function init() {
     canvas = document.querySelector("canvas");
     ctx = canvas.getContext("2d");
-    getCSV();
-
-    testNotes();
-
-    tick();
-}
-
-function testNotes(){ 
-  TEST_NOTES.forEach(note => {
-    setTimeout(() => {
-      notes.push({
-        lane: note.lane,
-        progress: 0
+    getCSV(function (){
+        tick();
       });
-    },note.time);
-  });
-
-  console.log(TEST_NOTES[2]);
-
 }
+
 window.addEventListener("DOMContentLoaded", init);
+
+var countUpValue = 0;
+function Songtime(delta){
+  countUpValue += delta;
+}
 
 addEventListener("DOMContentLoaded", init);
 
 let lastTime = null;
 function tick(time) {
+  
     const delta = lastTime == null ? 0 : (time - lastTime) / 1000;
     lastTime = time;
-
     update(delta);
     render();
     
@@ -57,14 +45,17 @@ function tick(time) {
 }
 
 //CSVファイルを読み込む関数getCSV()の定義
-function getCSV(){
+function getCSV(onload){
   var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
   req.open("get", "notedata.csv", true); // アクセスするファイルを指定
   req.send(); // HTTPリクエストの発行
  // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
- req.onload = function(){
-	convertCSVtoArray(req.responseText); // 渡されるのは読み込んだCSVデータ
-    }
+ req.onreadystatechange = function(){
+   if(req.status == 200 && req.readyState == XMLHttpRequest.DONE){
+  notearray = convertCSVtoArray(req.responseText); // 渡されるのは読み込んだCSVデータ
+  onload();
+   }
+  }
 }
 
 function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列として渡される
@@ -73,11 +64,10 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
 
   // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
   for(var i=0;i<tmp.length;++i){
+   
       result[i] = tmp[i].split(',');
-      console.log(result[i]); 
-  }
-
-  console.log(result[1]); 
+    }
+  return result;
 }
 
 
@@ -85,11 +75,22 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
  * 更新
  */
 function update(delta) {
-  
+  Songtime(delta);
   notes.forEach(note => {
-    note.progress += (200 / 0.5) * delta / NOTE_SCREEN_HEIGHT;
+    note.progress += (60 / 0.5) * delta / NOTE_SCREEN_HEIGHT;
   });
   notes = notes.filter(note => note.progress < 1.0);
+  if(countUpValue >= 60 / 60 / 4 * nextNoteLine && notearray.length > nextNoteLine){
+    for(j = 0; j <= 4; j++){
+      if(notearray[nextNoteLine][j] == 1){
+        notes.push({
+          lane: j,
+          progress: 0
+        });
+      }
+    }
+    nextNoteLine++;
+  }
 }
 
 /**
