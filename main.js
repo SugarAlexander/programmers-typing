@@ -17,6 +17,8 @@ let playing = false;
 
 let nextNoteLine = 0;
 
+let score = 0;
+
 const Music = new Audio();
 
 let bpm = 115;
@@ -31,6 +33,7 @@ function init() {
   canvas = document.querySelector("canvas");
   ctx = canvas.getContext("2d");
   notekey = canvas.getContext("2d");
+  scoretext = canvas.getContext("2d");
   
   document.body.appendChild(Music);
   Music.preload = "auto";
@@ -85,8 +88,14 @@ addEventListener("keydown", function (e) {
     notes = notes.filter(note => {
       const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
       const 入力キーが違う = note.lane != getkey[e.key];
+      if(note.y >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]){
+        score++;
+      }
       return 範囲外 || 入力キーが違う;
     })
+    
+    
+
     /*
     if (notes[0].y <= NOTE_GOOD_BOTTOM && notes[0].y >= NOTE_GOOD_TOP && notes[0].lane == getkey[e.key]) {
       console.log("パーフェクト！");
@@ -189,6 +198,9 @@ function render() {
   notekey.strokeStyle = '#f00';
   notekey.lineWidth = 3;
   notekey.font = 'normal 80pt "メイリオ"';
+  scoretext.strokeStyle = '#f00';
+  scoretext.fillStyle = "#0005DD";
+  scoretext.fillText("Score: "+score, 1000, 1000);
   //対応しているキーを表示する
   notekey.strokeText('D', 150, 1000); 
   notekey.strokeText('F', 300, 1000); 
