@@ -30,15 +30,15 @@ let noteVelocity = NOTES_DISTANCE / (60 / bpm);
 function init() {
   canvas = document.querySelector("canvas");
   ctx = canvas.getContext("2d");
-  notekey = canvas.getContext("2d");
-  
+
+
   document.body.appendChild(Music);
   Music.preload = "auto";
   Music.src = "./Music/nitizyou.wav"
   Music.load();
   getCSV(function () {
     tick();
-    
+
   });
 }
 
@@ -47,22 +47,22 @@ function init() {
 var countUpValue = 0;
 function Songtime(delta) {
   // countUpValue += delta;
-  countUpValue = Music.currentTime; 
+  countUpValue = Music.currentTime;
 }
 
 addEventListener("DOMContentLoaded", init);
 
 
-  function startMusic(){
-  if(playing == true){
+function startMusic() {
+  if (playing == true) {
 
-  Music.currentTime = 0;
-  
-  Music.play()
+    Music.currentTime = 0;
 
-  placementFirstNotes();
+    Music.play()
 
-}     
+    placementFirstNotes();
+
+  }
 }
 
 
@@ -75,13 +75,13 @@ const getkey = {
 };
 
 addEventListener("keydown", function (e) {
-  
-  if(playing == false){
+
+  if (playing == false) {
     playing = true;
     console.log("再生！");
     startMusic();
   }
-  if(playing){
+  if (playing) {
     notes = notes.filter(note => {
       const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
       const 入力キーが違う = note.lane != getkey[e.key];
@@ -93,8 +93,8 @@ addEventListener("keydown", function (e) {
       notes = notes.filter((note, index) => index != 0);
     }
     */
-}
-  
+  }
+
 });
 
 let lastTime = null;
@@ -158,24 +158,24 @@ function placementFirstNotes() {
  * 更新
  */
 function update(delta) {
-  if(playing){
-  Songtime(delta);
-  notes.forEach(note => {
-    note.y += noteVelocity * delta;
-  });
-  notes = notes.filter(note => note.y < canvas.height);
-  if (countUpValue + NOTE_GOOD_TOP / noteVelocity >= (60 / bpm / 4 * nextNoteLine) - 0.25  && notearray.length > nextNoteLine) {
-    for (lane = 0; lane <= 4; lane++) {
-      if (notearray[nextNoteLine][lane] == 1) {
-        notes.push({
-          lane: lane,
-          y: NOTE_FIRST_Y
-        });
+  if (playing) {
+    Songtime(delta);
+    notes.forEach(note => {
+      note.y += noteVelocity * delta;
+    });
+    notes = notes.filter(note => note.y < canvas.height);
+    if (countUpValue + NOTE_GOOD_TOP / noteVelocity >= (60 / bpm / 4 * nextNoteLine) - 0.25 && notearray.length > nextNoteLine) {
+      for (lane = 0; lane <= 4; lane++) {
+        if (notearray[nextNoteLine][lane] == 1) {
+          notes.push({
+            lane: lane,
+            y: NOTE_FIRST_Y
+          });
+        }
       }
+      nextNoteLine++;
     }
-    nextNoteLine++;
   }
-}
 }
 
 /**
@@ -186,15 +186,15 @@ function render() {
   ctx.fillStyle = "darkred";
   ctx.fillRect(0, NOTE_GOOD_TOP, 1980, NOTE_GOOD_BOTTOM - NOTE_GOOD_TOP);
   ctx.fillStyle = "black";
-  notekey.strokeStyle = '#f00';
-  notekey.lineWidth = 3;
-  notekey.font = 'normal 80pt "メイリオ"';
+  ctx.strokeStyle = '#f00';
+  ctx.lineWidth = 3;
+  ctx.font = 'normal 80pt "メイリオ"';
   //対応しているキーを表示する
-  notekey.strokeText('D', 150, 1000); 
-  notekey.strokeText('F', 300, 1000); 
-  notekey.strokeText('G', 450, 1000);
-  notekey.strokeText('H', 600, 1000); 
-  notekey.strokeText('J', 750, 1000); 
+  ctx.strokeText('D', 150, 1000);
+  ctx.strokeText('F', 300, 1000);
+  ctx.strokeText('G', 450, 1000);
+  ctx.strokeText('H', 600, 1000);
+  ctx.strokeText('J', 750, 1000);
   notes.forEach(note => {
     // 例えば fillRect で描く場合
     if (NOTE_GOOD_TOP <= note.y && note.y <= NOTE_GOOD_BOTTOM) {
