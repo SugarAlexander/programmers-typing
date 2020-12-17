@@ -4,31 +4,67 @@ let canvas;
 let ctx;
 
 const LEFT_OFFSET = 100;
-const TOP_OFFSET = 30;
+const NOTE_FIRST_Y = -30;
 const NOTE_WIDTH = 150; // ノーツの横幅
 const NOTE_HEIGHT = 50; // ノーツの高さ
-const NOTE_SCREEN_HEIGHT = 800; // ノーツを表示する領域の高さ
+const NOTES_DISTANCE = 120;
+const NOTE_GOOD_TOP = 750;
+const NOTE_GOOD_BOTTOM = 846;
 
 let notearray;
 
+let playing = false;
+
 let nextNoteLine = 0;
+
+const Music = new Audio();
+
+let bpm = 115;
+let noteVelocity = NOTES_DISTANCE / (60 / bpm);
+
+//対応しているキーがどこのキーなのかを表示する。
+//document.write("D");
+
+
 
 function init() {
   canvas = document.querySelector("canvas");
   ctx = canvas.getContext("2d");
+
+
+  document.body.appendChild(Music);
+  Music.preload = "auto";
+  Music.src = "./Music/nitizyou.wav"
+  Music.load();
   getCSV(function () {
     tick();
+
   });
 }
 
-window.addEventListener("DOMContentLoaded", init);
+//window.addEventListener("DOMContentLoaded", init);
 
 var countUpValue = 0;
 function Songtime(delta) {
-  countUpValue += delta;
+  // countUpValue += delta;
+  countUpValue = Music.currentTime;
 }
 
 addEventListener("DOMContentLoaded", init);
+
+
+function startMusic() {
+  if (playing == true) {
+
+    Music.currentTime = 0;
+
+    Music.play()
+
+    placementFirstNotes();
+
+  }
+}
+
 
 const getkey = {
   "d": 0,
@@ -39,10 +75,26 @@ const getkey = {
 };
 
 addEventListener("keydown", function (e) {
-  if (notes[0].progress <= 1.02 && notes[0].progress >= 0.90 && notes[0].lane == getkey[e.key]) {
-    console.log("パーフェクト！");
-    notes = notes.filter((note, index) => index != 0);
+
+  if (playing == false) {
+    playing = true;
+    console.log("再生！");
+    startMusic();
   }
+  if (playing) {
+    notes = notes.filter(note => {
+      const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
+      const 入力キーが違う = note.lane != getkey[e.key];
+      return 範囲外 || 入力キーが違う;
+    })
+    /*
+    if (notes[0].y <= NOTE_GOOD_BOTTOM && notes[0].y >= NOTE_GOOD_TOP && notes[0].lane == getkey[e.key]) {
+      console.log("パーフェクト！");
+      notes = notes.filter((note, index) => index != 0);
+    }
+    */
+  }
+
 });
 
 let lastTime = null;
@@ -82,28 +134,48 @@ function convertCSVtoArray(str) { // 読み込んだCSVデータが文字列と�
   return result;
 }
 
+/**
+ * 音楽再生開始時のノーツ配置
+ */
+function placementFirstNotes() {
+  let line = 0;
+  while (NOTE_GOOD_TOP / noteVelocity >= (60 / bpm / 4 * line)) {
+    for (lane = 0; lane <= 4; lane++) {
+      if (notearray[line][lane] == 1) {
+        notes.push({
+          lane: lane,
+          y: NOTE_GOOD_TOP - (NOTES_DISTANCE / 4 * line)
+        });
+      }
+    }
+    line++;
+  }
+  nextNoteLine = line;
+}
+
 
 /**
  * 更新
  */
 function update(delta) {
-  Songtime(delta);
-  notes.forEach(note => {
-    note.progress += (60 / 0.5) * delta / NOTE_SCREEN_HEIGHT;
-  });
-  notes = notes.filter(note => note.progress < 1.05);
-  if (countUpValue >= 60 / 60 / 4 * nextNoteLine && notearray.length > nextNoteLine) {
-    for (j = 0; j <= 4; j++) {
-      if (notearray[nextNoteLine][j] == 1) {
-        notes.push({
-          lane: j,
-          progress: 0
-        });
+  if (playing) {
+    Songtime(delta);
+    notes.forEach(note => {
+      note.y += noteVelocity * delta;
+    });
+    notes = notes.filter(note => note.y < canvas.height);
+    if (countUpValue + NOTE_GOOD_TOP / noteVelocity >= (60 / bpm / 4 * nextNoteLine) - 0.25 && notearray.length > nextNoteLine) {
+      for (lane = 0; lane <= 4; lane++) {
+        if (notearray[nextNoteLine][lane] == 1) {
+          notes.push({
+            lane: lane,
+            y: NOTE_FIRST_Y
+          });
+        }
       }
+      nextNoteLine++;
     }
-    nextNoteLine++;
   }
-  // console.log(notes);
 }
 
 /**
@@ -111,12 +183,28 @@ function update(delta) {
  */
 function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillRect(0, 800, 1980, 20);
+  ctx.fillStyle = "darkred";
+  ctx.fillRect(0, NOTE_GOOD_TOP, 1980, NOTE_GOOD_BOTTOM - NOTE_GOOD_TOP);
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = '#f00';
+  ctx.lineWidth = 3;
+  ctx.font = 'normal 80pt "メイリオ"';
+  //対応しているキーを表示する
+  ctx.strokeText('D', 150, 1000);
+  ctx.strokeText('F', 300, 1000);
+  ctx.strokeText('G', 450, 1000);
+  ctx.strokeText('H', 600, 1000);
+  ctx.strokeText('J', 750, 1000);
   notes.forEach(note => {
     // 例えば fillRect で描く場合
+    if (NOTE_GOOD_TOP <= note.y && note.y <= NOTE_GOOD_BOTTOM) {
+      ctx.fillStyle = "blue";
+    } else {
+      ctx.fillStyle = "black";
+    }
     ctx.fillRect(
       LEFT_OFFSET + note.lane * NOTE_WIDTH, // X座標
-      TOP_OFFSET + note.progress * NOTE_SCREEN_HEIGHT, // Y座標
+      note.y, // Y座標
       NOTE_WIDTH, NOTE_HEIGHT);
   });
 }
