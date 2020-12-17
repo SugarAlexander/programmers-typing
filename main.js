@@ -83,15 +83,18 @@ addEventListener("keydown", function (e) {
     startMusic();
   }
   if (playing) {
+    notes.forEach(note => {
+      if (note.y >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
+        score += 100;
+      }  
+    });
     notes = notes.filter(note => {
       const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
       const 入力キーが違う = note.lane != getkey[e.key];
-      if (note.y >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
-        score += 100;
-      }
       return 範囲外 || 入力キーが違う;
     })
-
+   
+    
 
 
     /*
