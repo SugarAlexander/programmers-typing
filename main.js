@@ -17,6 +17,8 @@ let playing = false;
 
 let nextNoteLine = 0;
 
+let score = 0;
+
 const Music = new Audio();
 
 let bpm = 115;
@@ -31,10 +33,9 @@ function init() {
   canvas = document.querySelector("canvas");
   ctx = canvas.getContext("2d");
 
-
   document.body.appendChild(Music);
   Music.preload = "auto";
-  Music.src = "./Music/nitizyou.wav"
+  Music.src = "./nitizyou.wav"
   Music.load();
   getCSV(function () {
     tick();
@@ -82,11 +83,20 @@ addEventListener("keydown", function (e) {
     startMusic();
   }
   if (playing) {
+    notes.forEach(note => {
+      if (note.y >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
+        score += 100;
+      }  
+    });
     notes = notes.filter(note => {
       const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
       const 入力キーが違う = note.lane != getkey[e.key];
       return 範囲外 || 入力キーが違う;
     })
+   
+    
+
+
     /*
     if (notes[0].y <= NOTE_GOOD_BOTTOM && notes[0].y >= NOTE_GOOD_TOP && notes[0].lane == getkey[e.key]) {
       console.log("パーフェクト！");
@@ -189,6 +199,9 @@ function render() {
   ctx.strokeStyle = '#f00';
   ctx.lineWidth = 3;
   ctx.font = 'normal 80pt "メイリオ"';
+  ctx.strokeStyle = '#f00';
+  ctx.fillStyle = "#0005DD";
+  ctx.fillText("Score: " + score, 1000, 1000);
   //対応しているキーを表示する
   ctx.strokeText('D', 150, 1000);
   ctx.strokeText('F', 300, 1000);
