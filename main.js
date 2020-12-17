@@ -35,7 +35,7 @@ function init() {
 
   document.body.appendChild(Music);
   Music.preload = "auto";
-  Music.src = "./Music/nitizyou.wav"
+  Music.src = "./nitizyou.wav"
   Music.load();
   getCSV(function () {
     tick();
@@ -87,7 +87,7 @@ addEventListener("keydown", function (e) {
       const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
       const 入力キーが違う = note.lane != getkey[e.key];
       if (note.y >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
-        score++;
+        score += 100;
       }
       return 範囲外 || 入力キーが違う;
     })
