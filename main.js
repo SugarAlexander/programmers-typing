@@ -31,8 +31,6 @@ let typed = {
   letter: 0
 }
 
-//let programText = ["～～～", "～～～", ... ];
-
 let showStartLine = 0;
 
 const Music = new Audio();
@@ -41,11 +39,6 @@ let SE = new Audio();
 
 let bpm = 115;
 let noteVelocity = NOTES_DISTANCE / (60 / bpm);
-
-//対応しているキーがどこのキーなのかを表示する。
-//document.write("D");
-
-
 
 function init() {
   canvas = document.querySelector("canvas");
@@ -68,22 +61,12 @@ function init() {
     notearray = convertCSVtoArray(array[0]);
     program = array[1];
 
-    console.log(notearray);
-    console.log(program);
     tick();
   })
-
-  //getCSV(function () {
-  //tick();
-
-  //});
 }
-
-//window.addEventListener("DOMContentLoaded", init);
 
 var countUpValue = 0;
 function Songtime(delta) {
-  // countUpValue += delta;
   countUpValue = Music.currentTime;
 }
 
@@ -143,18 +126,7 @@ addEventListener("keydown", function (e) {
       const 入力キーが違う = note.lane != getkey[e.key];
       return 範囲外 || 入力キーが違う;
     })
-
-
-
-
-    /*
-    if (notes[0].y <= NOTE_GOOD_BOTTOM && notes[0].y >= NOTE_GOOD_TOP && notes[0].lane == getkey[e.key]) {
-      console.log("パーフェクト！");
-      notes = notes.filter((note, index) => index != 0);
-    }
-    */
   }
-
 });
 
 let lastTime = null;
@@ -175,21 +147,6 @@ function getCSV() {
     return response.text();
   });
   return thenPromise;
-  /* var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
-   req.open("get", "notedata.csv", true); // アクセスするファイルを指定
-   req.send(); // HTTPリクエストの発行
-   // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
-   req.onreadystatechange = function () {
-     if (req.status == 200 && req.readyState == XMLHttpRequest.DONE) {
-       notearray = convertCSVtoArray(req.responseText); // 渡されるのは読み込んだCSVデータ
-       onload();*/
-  //  }
-  // }
-  //fetch("notedata.csv").then(response => { 
-  // return response.text();
-  //})/*.then(text => {
-  // program = text.split("\n");
-  //});*/
 }
 
 
@@ -218,20 +175,6 @@ function program_response() {
           : [...p, v], [""])
     ));
 }
-// fetch("main.js").then(response => { 
-//  return response.text();
-// })/*.then(text => {
-//  program = text.split("\n");
-// });*/
-
-
-//const newPromise = Promise.all([getCSV, program_response]);
-//newPromise.then(() => {
-//  notearray = convertCSVtoArray(text);
-// program = text.split("\n");
-//})
-
-
 /**
  * 音楽再生開始時のノーツ配置
  */
