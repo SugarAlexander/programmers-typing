@@ -34,6 +34,8 @@ let typed = {
 
 let showStartLine = 0;
 
+let particles = [];
+
 const Music = new Audio();
 
 let SE = new Audio();
@@ -109,6 +111,7 @@ addEventListener("keydown", function (e) {
     notes.forEach(note => {
       if (note.y + NOTE_HEIGHT >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
         score += 100;
+
         do {
           typed.letter += HIT_ADD_PROGRAM_LINE;
           if (typed.letter >= program[typed.line].length) {
@@ -120,6 +123,12 @@ addEventListener("keydown", function (e) {
             typed.letter = 0;
           }
         } while (program[typed.line] === "" || program[typed.line][typed.letter] === " ");
+
+        particles.push({
+          x: LEFT_OFFSET + getkey[e.key] * NOTE_WIDTH + NOTE_WIDTH / 2,
+          y: NOTE_GOOD_TOP + NOTE_GOOD_HALF,
+          life: 1
+        });
       }
     });
     notes = notes.filter(note => {
@@ -218,6 +227,12 @@ function update(delta) {
       nextNoteLine++;
     }
   }
+
+  // パーティクルの更新
+  particles = particles.map(particle => ({
+    ...particle,
+    life: particle.life - delta * 4
+  })).filter(particle => particle.life > 0);
 }
 
 /**
@@ -277,4 +292,16 @@ function render() {
     ctx.fillStyle = "white";
     ctx.fillText("PRESS ANY KEY TO START", 100, 600);
   }
+
+  // パーティクルの表示
+  
+  ctx.strokeStyle = "white";
+  particles.forEach(particle => {
+    ctx.beginPath();
+    ctx.lineWidth = 30;
+    ctx.globalAlpha = particle.life;
+    ctx.arc(particle.x, particle.y, (1 - particle.life) * 100, 0, Math.PI * 2);
+    ctx.stroke();
+  })
+  ctx.globalAlpha = 1;
 }
