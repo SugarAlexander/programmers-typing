@@ -4,7 +4,7 @@ body {
 }
 
 canvas {
-    background-color: gray;
+    background-color: black;
     position: absolute;
     left: 50%;
     margin-right: -50%;
