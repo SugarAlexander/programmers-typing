@@ -7,9 +7,10 @@ const LEFT_OFFSET = 100;
 const NOTE_FIRST_Y = -30;
 const NOTE_WIDTH = 150; // ノーツの横幅
 const NOTE_HEIGHT = 50; // ノーツの高さ
-const NOTES_DISTANCE = 120;
+const NOTES_DISTANCE = 300;
 const NOTE_GOOD_TOP = 750;
 const NOTE_GOOD_BOTTOM = 846;
+const NOTE_GOOD_HALF = (NOTE_GOOD_BOTTOM - NOTE_GOOD_TOP) / 2;
 const SHOW_PROGRAM_LINES = 18;
 const SHOW_PROGRAM_LINE_HEIGHT = 40;
 const HIT_ADD_PROGRAM_LINE = 5;
@@ -106,7 +107,7 @@ addEventListener("keydown", function (e) {
   }
   if (playing) {
     notes.forEach(note => {
-      if (note.y >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
+      if (note.y + NOTE_HEIGHT >= NOTE_GOOD_TOP && NOTE_GOOD_BOTTOM >= note.y && note.lane == getkey[e.key]) {
         score += 100;
         do {
           typed.letter += HIT_ADD_PROGRAM_LINE;
@@ -122,7 +123,7 @@ addEventListener("keydown", function (e) {
       }
     });
     notes = notes.filter(note => {
-      const 範囲外 = note.y < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
+      const 範囲外 = note.y + NOTE_HEIGHT < NOTE_GOOD_TOP || NOTE_GOOD_BOTTOM < note.y;
       const 入力キーが違う = note.lane != getkey[e.key];
       return 範囲外 || 入力キーが違う;
     })
@@ -205,7 +206,7 @@ function update(delta) {
       note.y += noteVelocity * delta;
     });
     notes = notes.filter(note => note.y < canvas.height);
-    if (countUpValue + NOTE_GOOD_TOP / noteVelocity >= (60 / bpm / 4 * nextNoteLine) - 0.25 && notearray.length > nextNoteLine) {
+    if (countUpValue + (NOTE_GOOD_TOP - NOTE_FIRST_Y + NOTE_GOOD_HALF) / noteVelocity >= (60 / bpm / 4 * nextNoteLine) && notearray.length > nextNoteLine) {
       for (lane = 0; lane <= 4; lane++) {
         if (notearray[nextNoteLine][lane] == 1) {
           notes.push({
@@ -259,7 +260,7 @@ function render() {
 
   notes.forEach(note => {
     // 例えば fillRect で描く場合
-    if (NOTE_GOOD_TOP <= note.y && note.y <= NOTE_GOOD_BOTTOM) {
+    if (NOTE_GOOD_TOP <= note.y + NOTE_HEIGHT && note.y <= NOTE_GOOD_BOTTOM) {
       ctx.fillStyle = "blue";
     } else {
       ctx.fillStyle = "white";
