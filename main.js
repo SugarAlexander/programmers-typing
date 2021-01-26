@@ -91,11 +91,11 @@ function startMusic() {
 
 
 const getkey = {
-  "d": 0,
-  "f": 1,
-  "g": 2,
-  "h": 3,
-  "j": 4,
+  "s": 0,
+  "d": 1,
+  "f": 2,
+  "j": 3,
+  "k": 4,
 };
 
 addEventListener("keydown", function (e) {
@@ -250,11 +250,11 @@ function render() {
   ctx.fillStyle = "#0005DD";
   ctx.fillText("Score: " + score, 1000, 900);
   //対応しているキーを表示する
-  ctx.strokeText('D', 150, 900);
-  ctx.strokeText('F', 300, 900);
-  ctx.strokeText('G', 450, 900);
-  ctx.strokeText('H', 600, 900);
-  ctx.strokeText('J', 750, 900);
+  ctx.strokeText('S', 150, 900);
+  ctx.strokeText('D', 300, 900);
+  ctx.strokeText('F', 450, 900);
+  ctx.strokeText('J', 600, 900);
+  ctx.strokeText('K', 750, 900);
 
   if (typed.line >= showStartLine + SHOW_PROGRAM_LINES) {
     showStartLine += SHOW_PROGRAM_LINES;
